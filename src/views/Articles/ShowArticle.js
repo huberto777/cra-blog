@@ -22,7 +22,6 @@ function ShowArticle(props) {
   useEffect(() => {
     ArticlesAPI.getArticle(props.match.params.slug)
       .then((response) => {
-        // console.log(response);
         setAuthor(response.user.map((user) => user.name));
         setTitle(response.title);
         setContent(response.content);

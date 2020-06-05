@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useEffect, useContext } from 'react';
 import ArticleTemplate from 'templates/ArticleTemplate';
 import AddArticle from 'views/Articles/AddArticle';
 import ArticleItem from 'views/Articles/ArticleItem';
@@ -6,9 +6,18 @@ import ButtonIcon from 'components/ButtonIcon/ButtonIcon';
 import plusIcon from 'assets/icons/plus.svg';
 import styled from 'styled-components';
 import Heading from 'components/Heading/Heading';
+import { useDispatch, useSelector } from 'react-redux';
 import ArticlesAPI from '../../api/ArticlesApi';
 import AuthContext from '../../context/AuthContext';
 import EditArticle from './EditArticle';
+import {
+  fetchAllArticles,
+  addArticle,
+  deleteArticle,
+  createStart,
+  editStart,
+  replaceArticle,
+} from '../../actions';
 
 const ContentWrapper = styled.div`
   width: 100%;
@@ -22,68 +31,53 @@ const StyledHeading = styled(Heading)`
 `;
 
 function ArticleList() {
-  const [articles, setArticles] = useState([]);
-  const [article, setArticle] = useState({});
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [create, setCreate] = useState(false);
-  const [edit, setEdit] = useState(false);
+  const dispatch = useDispatch();
   const { accessToken } = useContext(AuthContext);
+  const articlesLoading = useSelector((state) => state.loading);
+  const articlesLoadingError = useSelector((state) => state.error);
+  const articles = useSelector((state) => state.articles);
+  const article = useSelector((state) => state.article);
+  const create = useSelector((state) => state.create);
+  const edit = useSelector((state) => state.edit);
 
   useEffect(() => {
-    ArticlesAPI.getAllArticles()
-      .then((articles) => setArticles(articles))
-      .catch(() => setError(true))
-      .finally(() => setLoading(false));
-  }, []);
+    dispatch(fetchAllArticles(accessToken));
+  }, [accessToken, dispatch]);
 
-  const toggleCreate = () => {
-    setCreate((prevCreate) => !prevCreate);
-    setEdit(false);
+  const handleCreate = (createdArticle) => {
+    try {
+      ArticlesAPI.addArticle(createdArticle, accessToken).then((addedArticle) =>
+        dispatch(addArticle(addedArticle)),
+      );
+    } catch (error) {
+      console.log('Jest błąd przy tworzeniu timeboxa:', error);
+    }
   };
 
-  const handleRemoveArticle = (slug) => {
-    ArticlesAPI.removeArticle(slug, accessToken).then(() => {
-      setArticles((prevArticles) => {
-        const articles = prevArticles.filter((article) => article.slug !== slug);
-        return articles;
-      });
-    });
+  const toggleCreate = () => {
+    dispatch(createStart());
+  };
+
+  const handleRemoveArticle = (article) => {
+    dispatch(deleteArticle(article, accessToken));
   };
 
   const handleEditArticle = (article) => {
-    setArticle(article);
-    setEdit((prevEdit) => !prevEdit);
-    // console.log(article);
+    dispatch(editStart(article));
   };
 
-  const updateArticle = (slug, updatedArticle) => {
-    ArticlesAPI.replaceArticle(updatedArticle, accessToken).then(() => {
-      setArticles((prevArticles) => {
-        const articles = prevArticles.map((article) =>
-          slug === article.slug ? updatedArticle : article,
-        );
-        return articles;
-      });
-      setEdit(false);
-    });
-  };
-
-  const addArticle = (addedArticle) => {
-    ArticlesAPI.addArticle(addedArticle, accessToken).then(() => {
-      setArticles((prevArticles) => {
-        const articles = [...prevArticles, addedArticle];
-        return articles;
-      });
-      setCreate(false);
-    });
+  const updateArticle = (updatedArticle) => {
+    const articleToUpdate = { ...article, ...updatedArticle };
+    ArticlesAPI.replaceArticle(articleToUpdate, accessToken).then(() =>
+      dispatch(replaceArticle(articleToUpdate)),
+    );
   };
 
   return (
     <ContentWrapper>
-      {loading ? 'Artykuły się ładują...' : null}
-      {error ? 'Nie udało się załadować :(' : null}
-      {!create || <AddArticle create={create} toggleCreate={toggleCreate} onCreate={addArticle} />}
+      {articlesLoading ? 'Artykuły się ładują...' : null}
+      {articlesLoadingError ? 'Nie udało się załadować :(' : null}
+      {!create || <AddArticle create={create} onToggle={toggleCreate} onCreate={handleCreate} />}
       {edit ? (
         <EditArticle article={article} toggleEdit={handleEditArticle} onUpdate={updateArticle} />
       ) : (
@@ -97,7 +91,7 @@ function ArticleList() {
                 article={article}
                 index={index}
                 onEdit={() => handleEditArticle(article)}
-                onDelete={() => handleRemoveArticle(article.slug)}
+                onDelete={() => handleRemoveArticle(article)}
                 accessToken={accessToken}
               />
             ))}

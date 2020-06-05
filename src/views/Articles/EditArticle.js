@@ -6,6 +6,7 @@ import plusIcon from 'assets/icons/plus.svg';
 import iksIcon from 'assets/icons/iks.svg';
 import { Formik, Form } from 'formik';
 import styled from 'styled-components';
+import slugs from 'slugs';
 
 const StyledWrapper = styled.div`
   border-left: 10px solid ${({ theme }) => theme.add};
@@ -39,13 +40,13 @@ const Error = styled.span`
   color: red;
   font-weight: ${({ theme }) => theme.light};
 `;
-
+// slug: article.slug,
 const EditArticle = ({ article, toggleEdit, onUpdate }) => {
   return (
     <StyledWrapper>
       <Heading>Edit Article: {article.title}</Heading>
       <Formik
-        initialValues={{ slug: article.slug, title: article.title, content: article.content }}
+        initialValues={{  title: article.title, content: article.content }}
         validate={(values) => {
           const errors = {};
           if (values.title.length < 3) {
@@ -56,8 +57,8 @@ const EditArticle = ({ article, toggleEdit, onUpdate }) => {
           }
           return errors;
         }}
-        onSubmit={({ slug, title, content }) => {
-          onUpdate(slug, { slug, title, content });
+        onSubmit={({ title, content }) => {
+          onUpdate({ slug: slugs(title), title, content });
         }}
       >
         {({ values, errors, touched, isSubmitting, handleChange }) => (

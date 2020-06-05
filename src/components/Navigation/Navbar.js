@@ -4,11 +4,11 @@ import { routes } from '../../routes';
 import AuthAPI from '../../api/AuthApi';
 
 function Navbar({ onLogout, accessToken }) {
-  const handleGetAuthUser = (token) => {
-    AuthAPI.getAuthUser(token)
-      .then((response) => {
-        console.log(response);
-        return response;
+  const handleGetAuthUser = (accessToken) => {
+    AuthAPI.getAuthUser(accessToken)
+      .then((result) => {
+        console.log(result);
+        return result.name;
       })
       .catch((error) => {
         console.log(error);

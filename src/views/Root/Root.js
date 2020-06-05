@@ -45,33 +45,36 @@ function Root() {
       });
   };
 
+  const handleSearchInput = (e) => {};
+
+  const isUserLoggedIn = () => {
+    return !!accessToken;
+  };
+
   return (
     <BrowserRouter>
       <MainTemplate>
-        <AuthContext.Provider
-          value={{
-            accessToken,
-            onLoginAttempt: handleLoginAttempt,
-            onLogout: handleLogout,
-            errorMessage: previousLoginAttemptFailed ? 'Nie udało się zalogować' : undefined,
-          }}
-        >
-          <Navigation />
-          <Switch>
-            <Route path={routes.register} component={Register} />
-            <Route exact path={routes.home} render={() => <Redirect to="/articles" />} />
-            <Route exact path={routes.articles} component={ArticleList} />
-            <Route exact path={routes.showArticle} component={ShowArticle} />
-            <Route exact path={routes.login} component={Login} />
-            {accessToken ? (
-              <>
-                <Route exact path={routes.editComment} component={EditComment} />
-              </>
-            ) : (
-              <Login />
-            )}{' '}
-          </Switch>
-        </AuthContext.Provider>
+        {isUserLoggedIn() ? (
+          <AuthContext.Provider value={{ accessToken }}>
+            <Navigation onLogout={handleLogout} onSearch={handleSearchInput} />
+            <Switch>
+              <Route exact path={routes.home} render={() => <Redirect to="/articles" />} />
+              <Route exact path={routes.articles} component={ArticleList} />
+              <Route exact path={routes.showArticle} component={ShowArticle} />
+              <Route exact path={routes.editComment} component={EditComment} />
+            </Switch>
+          </AuthContext.Provider>
+        ) : (
+          <>
+            <Login
+              errorMessage={previousLoginAttemptFailed ? 'Nie udało się zalogować' : null}
+              onLoginAttempt={handleLoginAttempt}
+            />
+            <Switch>
+              <Route exact path={routes.register} component={Register} />
+            </Switch>
+          </>
+        )}
       </MainTemplate>
     </BrowserRouter>
   );

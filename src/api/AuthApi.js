@@ -8,7 +8,9 @@ const AuthAPI = {
     return result;
   },
   async getAuthUser(accessToken) {
-    const response = await axios.post(`${BASE_URL}/me`, accessToken);
+    const response = await axios.post(`${BASE_URL}/me`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
     const result = response.data;
     return result;
   },

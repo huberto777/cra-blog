@@ -42,7 +42,7 @@ const Error = styled.span`
   font-weight: ${({ theme }) => theme.light};
 `;
 
-const AddArticle = ({ create, toggleCreate, onCreate }) => (
+const AddArticle = ({ create, onToggle, onCreate }) => (
   <StyledWrapper create={create}>
     <Heading>Add User</Heading>
     <Formik
@@ -63,8 +63,8 @@ const AddArticle = ({ create, toggleCreate, onCreate }) => (
         }
         return errors;
       }}
-      onSubmit={({ title, content }) => {
-        onCreate({ slug: slugs(title), title, content });
+      onSubmit={(values) => {
+        onCreate(values);
       }}
     >
       {({ values, errors, touched, isSubmitting, handleChange }) => (
@@ -87,7 +87,7 @@ const AddArticle = ({ create, toggleCreate, onCreate }) => (
           />
           {errors.content && touched.content && <Error>{errors.content}</Error>}
           <ButtonIcon type="submit" icon={plusIcon} disabled={isSubmitting} />
-          <ButtonIcon icon={iksIcon} cancel onClick={toggleCreate} />
+          <ButtonIcon icon={iksIcon} cancel onClick={onToggle} />
         </StyledForm>
       )}
     </Formik>
@@ -97,7 +97,7 @@ const AddArticle = ({ create, toggleCreate, onCreate }) => (
 AddArticle.propTypes = {
   onCreate: PropTypes.func.isRequired,
   create: PropTypes.bool.isRequired,
-  toggleCreate: PropTypes.func.isRequired,
+  onToggle: PropTypes.func.isRequired,
 };
 
 export default AddArticle;

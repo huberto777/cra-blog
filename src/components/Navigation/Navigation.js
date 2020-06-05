@@ -40,8 +40,8 @@ const StyledInput = styled(Input)`
   width: 25%;
 `;
 
-function Navigation() {
-  const { accessToken, onLogout } = useContext(AuthContext);
+function Navigation({ onLogout, onSearch }) {
+  const { accessToken } = useContext(AuthContext);
   return (
     <NavBar>
       <Ul>
@@ -64,7 +64,7 @@ function Navigation() {
           <Navbar onLogout={onLogout} accessToken={accessToken} />
         )}
       </Ul>
-      <StyledInput search placeholder="search" />
+      <StyledInput search placeholder="search" onChange={onSearch} />
     </NavBar>
   );
 }

@@ -42,8 +42,8 @@ const Error = styled.span`
   font-weight: ${({ theme }) => theme.light};
 `;
 
-function Login() {
-  const { onLoginAttempt, accessToken, errorMessage } = useContext(AuthContext);
+function Login({ onLoginAttempt, errorMessage }) {
+  const { accessToken } = useContext(AuthContext);
   return (
     <>
       {accessToken && <Redirect to={routes.home} />}
@@ -62,25 +62,15 @@ function Login() {
             }
             return errors;
           }}
-          onSubmit={(values, { setSubmitting }) => {
-            setTimeout(() => {
-              onLoginAttempt(values);
-              setSubmitting(false);
-            }, 1000);
+          onSubmit={(values) => {
+            onLoginAttempt(values);
           }}
         >
-          {({
-            values,
-            errors,
-            touched,
-            handleChange,
-            isSubmitting,
-            /* and other goodies */
-          }) => {
+          {({ values, errors, touched, handleChange }) => {
             return (
               <>
                 {errorMessage ? <h3 style={{ color: 'red' }}>{errorMessage}</h3> : null}
-                <Heading>Login</Heading>
+                <Heading>Login to BLOG</Heading>
                 <StyledForm>
                   <StyledInput
                     name="email"
@@ -98,7 +88,7 @@ function Login() {
                     value={values.password}
                   />
                   {errors.password && touched.password && <Error>{errors.password}</Error>}
-                  <StyledButton type="submit" disabled={isSubmitting} cancel>
+                  <StyledButton type="submit" cancel>
                     login in
                   </StyledButton>
                   <StyledLink to={routes.register}>I want my account</StyledLink>
