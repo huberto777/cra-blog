@@ -25,21 +25,21 @@ const ArticlesAPI = {
     return addedArticle;
   },
   async replaceArticle(articleToUpdate, accessToken) {
-    if (!articleToUpdate.id) {
+    if (!articleToUpdate.slug) {
       throw new Error('Article has to have an slug to be updated');
     }
-    const response = await axios.put(`${BASE_URL}/${articleToUpdate.id}`, articleToUpdate, {
+    const response = await axios.put(`${BASE_URL}/${articleToUpdate.slug}`, articleToUpdate, {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
     const updatedArticle = response.data;
     return updatedArticle;
   },
   async removeArticle(article, accessToken) {
-    if (!article.id) {
+    if (!article.slug) {
       throw new Error('Article has to have an slug to be deleted');
     }
 
-    await axios.delete(`${BASE_URL}/${article.id}`, {
+    await axios.delete(`${BASE_URL}/${article.slug}`, {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
   },

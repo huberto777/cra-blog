@@ -24,13 +24,13 @@ export function rootReducer(state = initialState, action = {}) {
     case types.ARTICLE_REPLACE: {
       const { articleToUpdate } = action;
       const articles = state.articles.map((article) =>
-        article.id === articleToUpdate.id ? articleToUpdate : article,
+        article.slug === articleToUpdate.slug ? articleToUpdate : article,
       );
       return { ...state, articles, edit: false };
     }
     case types.ARTICLE_REMOVE: {
       const { removedArticle } = action;
-      const articles = state.articles.filter((article) => article.id !== removedArticle.id);
+      const articles = state.articles.filter((article) => article.slug !== removedArticle.slug);
       return { ...state, articles };
     }
     case types.ARTICLE_CREATE_START: {

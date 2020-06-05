@@ -40,13 +40,13 @@ const Error = styled.span`
   color: red;
   font-weight: ${({ theme }) => theme.light};
 `;
-// slug: article.slug,
+
 const EditArticle = ({ article, toggleEdit, onUpdate }) => {
   return (
     <StyledWrapper>
       <Heading>Edit Article: {article.title}</Heading>
       <Formik
-        initialValues={{  title: article.title, content: article.content }}
+        initialValues={{ slug: article.slug, title: article.title, content: article.content }}
         validate={(values) => {
           const errors = {};
           if (values.title.length < 3) {
@@ -57,8 +57,8 @@ const EditArticle = ({ article, toggleEdit, onUpdate }) => {
           }
           return errors;
         }}
-        onSubmit={({ title, content }) => {
-          onUpdate({ slug: slugs(title), title, content });
+        onSubmit={(values) => {
+          onUpdate(values);
         }}
       >
         {({ values, errors, touched, isSubmitting, handleChange }) => (
