@@ -8,12 +8,15 @@ import EditComment from 'views/Comments/EditComment';
 import Navigation from 'components/Navigation/Navigation';
 import Login from 'views/Auth/Login';
 import Register from 'views/Auth/Register';
+import { useDispatch } from 'react-redux';
 import AuthContext from '../../context/AuthContext';
 import AuthAPI from '../../api/AuthApi';
+import { searchInput } from '../../actions';
 
 function Root() {
   const [accessToken, setAccessToken] = useState(null);
   const [previousLoginAttemptFailed, setPreviousLoginAttemptFailed] = useState(false);
+  const dispatch = useDispatch();
 
   const getAccessToken = () => {
     setAccessToken(localStorage.getItem('accessToken'));
@@ -45,7 +48,9 @@ function Root() {
       });
   };
 
-  const handleSearchInput = (e) => {};
+  const handleSearchInput = (e) => {
+    dispatch(searchInput(e));
+  };
 
   const isUserLoggedIn = () => {
     return !!accessToken;

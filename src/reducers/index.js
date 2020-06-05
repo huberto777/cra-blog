@@ -47,7 +47,18 @@ export function rootReducer(state = initialState, action = {}) {
     case types.LOADING_INDICATOR_DISABLE: {
       return { ...state, loading: false };
     }
+    case types.SEARCH_INPUT: {
+      const { payload } = action;
+      return { ...state, searchQuery: payload };
+    }
+
     default:
       return state;
   }
 }
+
+// selectors
+export const getRemainingArticles = (state) =>
+  !state.searchQuery
+    ? state.articles
+    : state.articles.filter((article) => article.title.toLowerCase().includes(state.searchQuery));

@@ -7,11 +7,6 @@ const ArticlesAPI = {
     const articles = response.data;
     return articles;
   },
-  async getSearchArticles(searchQuery) {
-    const response = await axios.get(`${BASE_URL}/?q=${searchQuery}`);
-    const articles = response.data;
-    return articles;
-  },
   async getArticle(slug) {
     const response = await axios.get(`${BASE_URL}/${slug}`);
     const article = response.data;

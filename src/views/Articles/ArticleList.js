@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import ArticlesAPI from '../../api/ArticlesApi';
 import AuthContext from '../../context/AuthContext';
 import EditArticle from './EditArticle';
+import { getRemainingArticles } from '../../reducers';
 import {
   fetchAllArticles,
   addArticle,
@@ -39,10 +40,11 @@ function ArticleList() {
   const article = useSelector((state) => state.article);
   const create = useSelector((state) => state.create);
   const edit = useSelector((state) => state.edit);
+  const remainingArticles = useSelector((state) => getRemainingArticles(state));
 
   useEffect(() => {
     dispatch(fetchAllArticles(accessToken));
-  }, [accessToken, dispatch]);
+  }, [dispatch, accessToken]);
 
   const handleCreate = (createdArticle) => {
     try {
@@ -85,7 +87,7 @@ function ArticleList() {
           <StyledHeading>articles list</StyledHeading>
           {edit || <ButtonIcon icon={plusIcon} onClick={toggleCreate} add />}
           <ArticleTemplate articles={articles} accessToken={accessToken}>
-            {articles.map((article, index) => (
+            {remainingArticles.map((article, index) => (
               <ArticleItem
                 key={article.slug}
                 article={article}

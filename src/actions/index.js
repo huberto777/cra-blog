@@ -39,6 +39,11 @@ export const createStart = () => ({
   type: types.ARTICLE_CREATE_START,
 });
 
+export const searchInput = (e) => ({
+  type: types.SEARCH_INPUT,
+  payload: e.target.value.toLowerCase(),
+});
+
 // redux-thunk
 export const fetchAllArticles = (accessToken) => (dispatch) => {
   ArticlesAPI.getAllArticles(accessToken)
